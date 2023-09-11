@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: nginx-a
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -30,7 +30,7 @@ kind: Deployment
 metadata:
   name: nginx-b
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -61,7 +61,6 @@ spec:
   selector:
     app: nginx
   ports:
-  - port: 8000
+  - port: 8001
     targetPort: 80
-    nodePort: 30000
-  
+    nodePort: 30001
