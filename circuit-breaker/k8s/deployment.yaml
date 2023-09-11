@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servicex
+spec:
+  selector:
+    matchLabels:
+      app: servicex
+  template:
+    metadata:
+      labels:
+        app: servicex
+        version: "200"
+    spec:
+      containers:
+      - name: servicex
+        image: vaniltonalv3sfilho/circuit-breaker-server
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            cpu: 100m
+            memory: 25Mi
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servicex-error
+spec:
+  selector:
+    matchLabels:
+      app: servicex
+  template:
+    metadata:
+      labels:
+        app: servicex
+        version: "503"
+    spec:
+      containers:
+      - name: servicex
+        image: vaniltonalv3sfilho/circuit-breaker-server
+        ports:
+        - containerPort: 8000
+        env:
+          - name: error
+            value: "yes"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 25Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicex-service
+spec:
+  type: ClusterIP
+  selector:
+    app: servicex 
+  ports:
+  - port: 80
+    targetPort: 8000
+
