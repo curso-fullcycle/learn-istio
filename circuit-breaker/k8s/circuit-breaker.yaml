@@ -6,8 +6,8 @@ spec:
   host: servicex-service.default.svc.cluster.local
   trafficPolicy:
     outlierDetection:
-      consecutive5xxErrors: 0
+      # consecutive5xxErrors: 20
       consecutiveGatewayErrors: 10
       interval: 20s
-      baseEjectionTime: 30s
+      baseEjectionTime: 30s # vai dobrando
       maxEjectionPercent: 100
