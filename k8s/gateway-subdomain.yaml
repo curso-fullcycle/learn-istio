@@ -1,0 +1,107 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: ingress-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: http2
+      hosts:
+      - "*.fullcycle"
+
+---
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nginx-vs-a
+spec:
+  hosts:
+  - "a.fullcycle"
+  gateways:
+  - ingress-gateway
+  http:
+    # - match:
+    #   - uri:
+    #       prefix: "/b"
+    #   route:
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v2
+    # - match:
+    #   - uri:
+    #       prefix: "/"
+    - route:
+      - destination:
+          host: nginx-service
+          subset: v1
+    # - route:
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v1
+    #     weight: 0
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v2
+    #     weight: 100
+                
+---
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nginx-vs-b
+spec:
+  hosts:
+  - "b.fullcycle"
+  gateways:
+  - ingress-gateway
+  http:
+    # - match:
+    #   - uri:
+    #       prefix: "/b"
+    #   route:
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v2
+    # - match:
+    #   - uri:
+    #       prefix: "/"
+    - route:
+      - destination:
+          host: nginx-service
+          subset: v2
+    # - route:
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v1
+    #     weight: 0
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v2
+    #     weight: 100
+# ---
+
+# apiVersion: networking.istio.io/v1beta1
+# kind: DestinationRule
+# metadata:
+#   name: nginx-dr
+# spec:
+#   host: nginx-service
+#   trafficPolicy:
+#     loadBalancer:
+#       simple: ROUND_ROBIN
+#   subsets:
+#     - name: v1
+#       labels:
+#         version: A
+#       trafficPolicy:
+#         loadBalancer:
+#           simple: LEAST_CONN
+#     - name: v2
+#       labels:
+#         version: B

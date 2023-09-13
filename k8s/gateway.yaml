@@ -14,23 +14,40 @@ spec:
       - "*"
 
 ---
+
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: nginx-vs
 spec:
   hosts:
-  - nginx-service
+  - "*"
+  gateways:
+  - ingress-gateway
   http:
-    - route:
-      - destination:
-          host: nginx-service
-          subset: v1
-        weight: 80
+    - match:
+      - uri:
+          prefix: "/b"
+      route:
       - destination:
           host: nginx-service
           subset: v2
-        weight: 20
+    - match:
+      - uri:
+          prefix: "/"
+      route:
+      - destination:
+          host: nginx-service
+          subset: v1
+    # - route:
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v1
+    #     weight: 0
+    #   - destination:
+    #       host: nginx-service
+    #       subset: v2
+    #     weight: 100
                 
 ---
 
